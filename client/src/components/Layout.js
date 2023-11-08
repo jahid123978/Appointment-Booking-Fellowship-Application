@@ -3,6 +3,8 @@ import "../layout.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Badge } from "antd";
+import { BellOutlined } from '@ant-design/icons';
+import Footer from "../pages/Footer";
 
 function Layout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -73,14 +75,15 @@ function Layout({ children }) {
   const role = user?.isAdmin ? "Admin" : user?.isDoctor ? "Doctor" : "User";
   return (
     <div className="main">
-      <div className="d-flex layout">
+      {/* className="main" */}
+      <div className="d-flex">
         <div className="sidebar">
           <div className="sidebar-header">
-            <h1 className="logo">SH</h1>
-            <h1 className="role">{role}</h1>
+            <h1 className="logo">DPFS  <span className="role">{role}</span> </h1>
+           
           </div>
 
-          <div className="menu">
+          <div className="d-flex all-menu">
             {menuToBeRendered.map((menu) => {
               const isActive = location.pathname === menu.path;
               return (
@@ -89,55 +92,38 @@ function Layout({ children }) {
                     isActive && "active-menu-item"
                   }`}
                 >
-                  <i className={menu.icon}></i>
+                  {/* <i className={menu.icon}></i> */}
                   {!collapsed && <Link to={menu.path}>{menu.name}</Link>}
                 </div>
               );
             })}
-            <div
-              className={`d-flex menu-item `}
+            <div  className={`d-flex menu-item `}>
+            <Badge
+            className="items"
+                count={user?.unseenNotifications.length}
+                onClick={() => navigate("/notifications")}
+              >
+                <BellOutlined className="header-action-icon" />
+              </Badge>
+             {!collapsed && <Link  className="items" to="/profile">
+                {user?.name}
+              </Link>}
+              <div
+              className="items"
               onClick={() => {
                 localStorage.clear();
                 navigate("/login");
               }}
             >
-              <i className="ri-logout-circle-line"></i>
               {!collapsed && <Link to="/login">Logout</Link>}
+              {collapsed && <Link to="/login">Login</Link>}
             </div>
+            </div>        
           </div>
-        </div>
-
-        <div className="content">
-          <div className="header">
-            {collapsed ? (
-              <i
-                className="ri-menu-2-fill header-action-icon"
-                onClick={() => setCollapsed(false)}
-              ></i>
-            ) : (
-              <i
-                className="ri-close-fill header-action-icon"
-                onClick={() => setCollapsed(true)}
-              ></i>
-            )}
-
-            <div className="d-flex align-items-center px-4">
-              <Badge
-                count={user?.unseenNotifications.length}
-                onClick={() => navigate("/notifications")}
-              >
-                <i className="ri-notification-line header-action-icon px-3"></i>
-              </Badge>
-
-              <Link className="anchor mx-2" to="/profile">
-                {user?.name}
-              </Link>
-            </div>
-          </div>
-
-          <div className="body">{children}</div>
         </div>
       </div>
+      <div className="body" style={{marginBottom:'1px'}}>{children}</div>
+      <Footer></Footer>
     </div>
   );
 }

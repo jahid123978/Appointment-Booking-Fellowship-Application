@@ -5,6 +5,7 @@ import React from "react";
 function DoctorForm({ onFinish, initivalValues }) {
   return (
     <Form
+    style={{width:"70rem", marginLeft:'5rem'}}
       layout="vertical"
       onFinish={onFinish}
       initialValues={{

@@ -77,7 +77,7 @@ function Profile() {
   }, []);
   return (
     <Layout>
-      <h1 className="page-title">Doctor Profile</h1>
+      <h1 className="page-title text-center p-3">Doctor Profile</h1>
       <hr />
       {doctor && <DoctorForm onFinish={onFinish} initivalValues={doctor} />}
     </Layout>

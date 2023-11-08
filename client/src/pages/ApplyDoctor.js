@@ -47,9 +47,8 @@ function ApplyDoctor() {
 
   return (
     <Layout>
-      <h1 className="page-title">Apply Doctor</h1>
+      <h1 className="page-title text-center p-3">Apply Doctor</h1>
       <hr />
-
       <DoctorForm onFinish={onFinish} />
     </Layout>
   );

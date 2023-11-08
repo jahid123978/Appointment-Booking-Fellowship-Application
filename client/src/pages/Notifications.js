@@ -55,10 +55,10 @@ function Notifications() {
   }
   return (
     <Layout>
-      <h1 className="page-title">Notifications</h1>
+      <h1 className="page-title text-center p-3">Notifications</h1>
       <hr />
 
-      <Tabs>
+      <Tabs style={{width:'50rem', marginBottom:'10px', marginLeft:'10px'}}>
         <Tabs.TabPane tab="Unseen" key={0}>
           <div className="d-flex justify-content-end">
             <h1 className="anchor" onClick={()=>markAllAsSeen()}>Mark all as seen</h1>

@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 function Doctor({ doctor }) {
   const navigate = useNavigate();
+  // console.log("doctor: ", doctor)
   return (
     <div
-      className="card p-2 cursor-pointer"
+      className="card p-2 cursor-pointer w-80"
       onClick={() => navigate(`/book-appointment/${doctor._id}`)}
     >
       <h1 className="card-title">
