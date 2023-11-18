@@ -2,14 +2,13 @@ import { Button, Col, Form, Input, Row, TimePicker } from "antd";
 import moment from "moment";
 import React, { useState } from "react";
 
-function DoctorForm({ onFinish, initivalValues }) {
+function DoctorDetails({ initivalValues}) {
   const [file, setFile] = useState("");
   console.log("file: ", file);
   return (
     <Form
     style={{width:"70rem", marginLeft:'5rem'}}
       layout="vertical"
-      onFinish={onFinish}
       initialValues={{
         ...initivalValues,
         ...(initivalValues && {
@@ -141,14 +140,8 @@ function DoctorForm({ onFinish, initivalValues }) {
           </Form.Item>
         </Col> */}
       </Row>
-
-      <div className="d-flex justify-content-end">
-        <Button className="primary-button" htmlType="submit">
-          SUBMIT
-        </Button>
-      </div>
     </Form>
   );
 }
 
-export default DoctorForm;
+export default DoctorDetails;

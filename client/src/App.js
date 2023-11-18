@@ -54,6 +54,14 @@ function App() {
           }
         />
         <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/apply-doctor"
           element={
             <ProtectedRoute>
@@ -93,6 +101,14 @@ function App() {
             <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/:userId"
+          element={
+            // <ProtectedRoute>
+              <Profile />
+            // </ProtectedRoute>
           }
         />
 

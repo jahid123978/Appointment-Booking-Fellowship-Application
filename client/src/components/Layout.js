@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../layout.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "antd";
 import { BellOutlined } from '@ant-design/icons';
 import Footer from "../pages/Footer";
+import { showLoading } from "../redux/alertsSlice";
 
 function Layout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
-  const { user } = useSelector((state) => state.user);
+  const [currentUser, setCurrentUser] = useState("")
+  const { user } = useSelector((state) =>state.user);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -115,7 +117,11 @@ function Layout({ children }) {
                 navigate("/login");
               }}
             >
-              {!collapsed && <Link to="/login">Logout</Link>}
+              {!collapsed && <Link onClick={()=>{
+               localStorage.clear();
+               navigate("/login");
+               window.location.reload();
+              }}>Logout</Link>}
               {collapsed && <Link to="/login">Login</Link>}
             </div>
             </div>        

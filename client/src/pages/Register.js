@@ -37,6 +37,9 @@ function Register() {
           <Form.Item label="Email" name="email">
             <Input placeholder="Email" />
           </Form.Item>
+          <Form.Item label="Phone Number" name="phoneNumber">
+            <Input placeholder="e.g: +8801455645649" />
+          </Form.Item>
           <Form.Item label="Password" name="password">
             <Input placeholder="Password" type="password" />
           </Form.Item>

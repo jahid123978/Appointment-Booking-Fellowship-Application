@@ -75,11 +75,13 @@ function Profile() {
   useEffect(() => {
     getDoctorData();
   }, []);
+  console.log("doctor: ", doctor)
   return (
     <Layout>
       <h1 className="page-title text-center p-3">Doctor Profile</h1>
       <hr />
-      {doctor && <DoctorForm onFinish={onFinish} initivalValues={doctor} />}
+      {/* {doctor && <DoctorForm onFinish={onFinish} initivalValues={doctor} />} */}
+      {  <DoctorForm onFinish={onFinish} initivalValues={doctor} />}
     </Layout>
   );
 }

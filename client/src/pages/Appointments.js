@@ -26,6 +26,28 @@ function Appointments() {
       dispatch(hideLoading());
     }
   };
+  const changeAppointmentStatus = async (record, status) => {
+    try {
+      dispatch(showLoading());
+      const resposne = await axios.post(
+        "/api/doctor/change-appointment-status",
+        { appointmentId : record._id, status: status },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(hideLoading());
+      if (resposne.data.success) {
+        toast.success(resposne.data.message);
+        getAppointmentsData();
+      }
+    } catch (error) {
+      toast.error("Error changing doctor account status");
+      dispatch(hideLoading());
+    }
+  };
   const columns = [
     {
         title: "Id",
@@ -61,7 +83,25 @@ function Appointments() {
     {
         title: "Status",
         dataIndex: "status",
-    }
+    },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      render: (text, record) => (
+        <div className="d-flex">
+          {record.status === "pending" && (
+            <div>
+              <h1
+                className="anchor"
+                onClick={() => changeAppointmentStatus(record, "Cancel")}
+              >
+                Cancel
+              </h1>
+            </div>
+          )}
+        </div>
+      ),
+    },
   ];
   useEffect(() => {
     getAppointmentsData();

@@ -1,5 +1,5 @@
 import { Button, Col, Form, Input, Row, TimePicker } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../components/Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { showLoading, hideLoading } from "../redux/alertsSlice";
@@ -10,10 +10,13 @@ import DoctorForm from "../components/DoctorForm";
 import moment from "moment";
 
 function ApplyDoctor() {
+  
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const onFinish = async (values) => {
+    // values.img = file;
+    console.log("values: ", values)
     try {
       dispatch(showLoading());
       const response = await axios.post(

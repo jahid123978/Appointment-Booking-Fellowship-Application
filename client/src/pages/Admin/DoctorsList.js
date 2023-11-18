@@ -4,12 +4,17 @@ import Layout from "../../components/Layout";
 import { showLoading, hideLoading } from "../../redux/alertsSlice";
 import {toast} from 'react-hot-toast'
 import axios from "axios";
-import { Table } from "antd";
+import { Button, Table } from "antd";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import DoctorDetails from "./DoctorDetails";
 
 function DoctorsList() {
   const [doctors, setDoctors] = useState([]);
+  const [isDoctor, setIsDoctor] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const getDoctorsData = async () => {
     try {
       dispatch(showLoading());
@@ -52,6 +57,11 @@ function DoctorsList() {
   useEffect(() => {
     getDoctorsData();
   }, []);
+  const handleDetails = async(record)=>{
+    
+    navigate(`/profile/${record.userId}`)
+    console.log("record: ", record)
+  }
   const columns = [
     {
       title: "Name",
@@ -99,12 +109,32 @@ function DoctorsList() {
         </div>
       ),
     },
+    {
+      title: "Details",
+      dataIndex: "details",
+      render: (text, record) => (
+        <div>
+       
+            <h1
+              className="anchor"
+              onClick={() => {
+                setIsDoctor(true);
+                setSelectedDoctor(record);
+              }}
+            >
+              Details
+            </h1>
+        </div>
+      ),
+    },
   ];
   return (
     <Layout>
-      <h1 className="page-header">Doctors List</h1>
+      {!isDoctor && <h1 className="page-header">Doctors List</h1>}
       <hr />
-      <Table columns={columns} dataSource={doctors} />
+      {!isDoctor &&<Table columns={columns} dataSource={doctors} />}
+      {isDoctor && <DoctorDetails initivalValues={selectedDoctor} setIsDoctor={setIsDoctor}></DoctorDetails>}
+      {isDoctor && <Button className="primary-button" onClick={()=>setIsDoctor(false)}>Back to DoctocList</Button>}
     </Layout>
   );
 }

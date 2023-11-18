@@ -40,6 +40,10 @@ function Userslist() {
       dataIndex: "email",
     },
     {
+      title: "phone Number",
+      dataIndex: "phoneNumber",
+    },
+    {
       title: "Created At",
       dataIndex: "createdAt",
       render: (record , text) => moment(record.createdAt).format("DD-MM-YYYY"),

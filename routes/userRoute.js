@@ -6,8 +6,19 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/authMiddleware");
 const Appointment = require("../models/appointmentModel");
+const multer = require('multer');
 const moment = require("moment");
-
+const { TWILIO_SERVICE_SID, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN } =  process.env;
+ const client = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, { lazyLoading: true })
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/images'); // Store images in the 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 router.post("/register", async (req, res) => {
   try {
     const userExists = await User.findOne({ email: req.body.email });
@@ -34,6 +45,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  console.log("req.body: ", req.body);
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
@@ -47,12 +59,20 @@ router.post("/login", async (req, res) => {
         .status(200)
         .send({ message: "Password is incorrect", success: false });
     } else {
+      const otpResponse = await client.verify.v2
+      .services(TWILIO_SERVICE_SID)  
+      .verifications.create({
+          to : `+${req.body.phoneNumber}`,
+          channel : "sms",
+      })  
+    //  res.status(200).send(`OTP send successfully!: ${JSON.stringify(otpResponse)}`)
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
       res
         .status(200)
-        .send({ message: "Login successful", success: true, data: token });
+        .send({ message: `OTP send successfully!`, success: true, data: token });
+
     }
   } catch (error) {
     console.log(error);
@@ -61,6 +81,21 @@ router.post("/login", async (req, res) => {
       .send({ message: "Error logging in", success: false, error });
   }
 });
+router.post("/verify-otp", async(req, res)=>{
+  const {phoneNumber, otp } = req.body;
+  try {
+     const verifiedResponse= await client.verify.
+     v2.services(TWILIO_SERVICE_SID)
+     .verificationChecks.create({
+         to: `+${phoneNumber}`,
+         code: otp
+     })
+    //  : ${JSON.stringify(verifiedResponse)}
+     res.status(200).send({message: `OTP verified successfully!`, success: true})
+  } catch (error) {
+     res.status(error?.status || 400).send({message: "Error logging in", success: false, error})
+  }
+})
 
 router.post("/get-user-info-by-id", authMiddleware, async (req, res) => {
   try {
@@ -85,7 +120,7 @@ router.post("/get-user-info-by-id", authMiddleware, async (req, res) => {
 
 router.post("/apply-doctor-account", authMiddleware, async (req, res) => {
   try {
-    const newdoctor = new Doctor({ ...req.body, status: "pending" });
+    const newdoctor = new Doctor({ ...req.body, status: "pending"});
     await newdoctor.save();
     const adminUser = await User.findOne({ isAdmin: true });
 
