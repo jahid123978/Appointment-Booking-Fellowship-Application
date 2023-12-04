@@ -4,7 +4,7 @@ import Layout from "../../components/Layout";
 import { showLoading, hideLoading } from "../../redux/alertsSlice";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { Table } from "antd";
+import { Button, Modal, Table } from "antd";
 import moment from "moment";
 
 function DoctorAppointments() {
@@ -28,6 +28,22 @@ function DoctorAppointments() {
     } catch (error) {
       dispatch(hideLoading());
     }
+  };
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [modalText, setModalText] = useState({});
+  // const showModal = () => {
+  //   setOpen(true);
+  // };
+  const handleOk = () => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+  const handleCancel = () => {
+    setOpen(false);
   };
 
   const changeAppointmentStatus = async (record, status) => {
@@ -102,6 +118,32 @@ function DoctorAppointments() {
               </h1>
             </div>
           )}
+        </div>
+      ),
+    },
+    {
+      title: "Pyment Information",
+      dataIndex: "information",
+      render: (text, record) => (
+        <div>
+      <Button type="primary" onClick={()=>{
+        setOpen(true)
+        setModalText(record)
+      }
+      }>
+        See more
+      </Button>
+     {modalText?.isPayment? <Modal
+        title="Payment Information"
+        open={open}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        <h4>{modalText?.number}</h4>
+        <h4>{modalText?.transactionId}</h4>
+      </Modal>: ""}
+          
         </div>
       ),
     },

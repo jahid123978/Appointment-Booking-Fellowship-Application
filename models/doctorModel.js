@@ -42,7 +42,7 @@ const doctorSchema = new mongoose.Schema(
       required: true,
     },
     registrationNumber : {
-      type: Number,
+      type: String,
       required: true,
     },
     status: {
