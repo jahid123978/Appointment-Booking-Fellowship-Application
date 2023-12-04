@@ -4,10 +4,56 @@ import Layout from "../components/Layout";
 import { showLoading, hideLoading } from "../redux/alertsSlice";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { Table } from "antd";
+import { Table, Button, Modal, Form, Input, Radio } from "antd";
 import moment from "moment";
-
-function Appointments() {
+const CreateForm = (props) => {
+  const { visible, setVisible, onCreate, record } = props;
+  const [form] = Form.useForm();
+  console.log("record: ", record);
+  const handleCreate = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        form.resetFields();
+        console.log("check value: ", values);
+        onCreate(values);
+        setVisible(false);
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
+  return (
+    <Modal
+      visible={visible}
+      title={`Docotor: ${record?.doctorInfo?.firstName}  Number: ${record?.doctorInfo?.phoneNumber}` }
+      okText="Ok"
+      onCancel={() => {
+        setVisible(false);
+      }}
+      onOk={handleCreate}
+    >
+      <Form form={form} layout="vertical">
+        {/* <Form.Item
+          label="Title"
+          name="title"
+          rules={[
+            { required: true, message: "Please input the title of collection!" }
+          ]}
+        >
+          <Input />
+        </Form.Item> */}
+        <Form.Item name="number" label="Bkash Number">
+          <Input type="number" />
+        </Form.Item>
+        <Form.Item name="transaction" label="Transaction">
+          <Input type="string" />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+function Appointments({onChange}) {
   const [appointments, setAppointments] = useState([]);
   const dispatch = useDispatch();
   const getAppointmentsData = async () => {
@@ -23,6 +69,37 @@ function Appointments() {
         setAppointments(resposne.data.data);
       }
     } catch (error) {
+      dispatch(hideLoading());
+    }
+  };
+  const changePaymentStatus = async (record, status) =>{
+
+  }
+  const [visible, setVisible] = useState(false);
+  const [recordInfo, setRecordInfo] = useState({});
+
+  const onCreate = async (values) => {
+    console.log("recodfkj: ", recordInfo._id);
+    // onChange(values);
+    setVisible(false);
+    try {
+      dispatch(showLoading());
+      const resposne = await axios.post(
+        "/api/doctor/change-appointment-payment",
+        { appointmentId : recordInfo._id, number: values?.number, transactionId: values?.transaction, isPayment: true},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(hideLoading());
+      if (resposne.data.success) {
+        toast.success(resposne.data.message);
+        getAppointmentsData();
+      }
+    } catch (error) {
+      toast.error("Error changing doctor account status");
       dispatch(hideLoading());
     }
   };
@@ -99,6 +176,40 @@ function Appointments() {
               </h1>
             </div>
           )}
+        </div>
+      ),
+    },
+    {
+      title: "Payment",
+      dataIndex: "payment",
+      render: (text, record) => (
+        <div className="d-flex">
+            <div>
+              {!record.isPayment?  
+            <Button
+        type="primary"
+        onClick={() => {
+          setVisible(true);
+          setRecordInfo(record);
+          console.log("record1: ", record)
+        }}
+      >
+        payment
+      </Button>: <h4>Done</h4>}
+      <CreateForm
+        visible={visible}
+        setVisible={setVisible}
+        onCreate={onCreate}
+        record = {recordInfo}
+      />
+      
+              {/* <h1
+                className="anchor"
+                onClick={() => changePaymentStatus(record, "Done")}
+              >
+                Payment
+              </h1> */}
+            </div>
         </div>
       ),
     },
